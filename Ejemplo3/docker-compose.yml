@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  mysql:
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: password  # Cambia esto a tu contraseña deseada
+      MYSQL_DATABASE: prueba         # Cambia esto al nombre de tu base de datos
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  mi-api:
+    build: ./api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql
+    environment:
+      MYSQL_HOST: mysql  # Nombre del servicio del contenedor MySQL en Docker Compose
+      MYSQL_USER: root   # Nombre de usuario predeterminado de MySQL
+      MYSQL_PASSWORD: password  # Contraseña definida en el contenedor MySQL
+      MYSQL_DB: prueba    # Nombre de la base de datos
+
+  mi-landing-page:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./landing_page:/usr/share/nginx/html
+
+volumes:
+  mysql_data:
